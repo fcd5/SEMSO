@@ -1,0 +1,55 @@
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #1b1f3b, #302b63, #24243e);
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+}
+
+.container {
+  width: 500px;
+  margin: 80px auto;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.time {
+  text-align: center;
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-bottom: 25px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+td {
+  padding: 14px;
+  text-align: center;
+}
+
+tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.coin {
+  font-weight: bold;
+  color: #00e0ff;
+}
+
+.price {
+  font-family: monospace;
+}
