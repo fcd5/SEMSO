@@ -13,7 +13,7 @@ ACCOUNT_ADDRESS = "0xa7eE1aBCD7af18B0956877D0dc26a5bf0E0ad575"
 # =========================
 # Deployed contract info
 # =========================
-CONTRACT_ADDRESS = "0xa83FC29A3c2852FC8ab61a4de728864d04171A97"
+CONTRACT_ADDRESS = "0xf1d53bD2D95EDf0EE8A794348c56129D3EACA7D5"
 
 with open("artifacts/contracts/PriceOracle.sol/PriceOracle.json") as f:
     abi = json.load(f)["abi"]

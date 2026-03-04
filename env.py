@@ -15,11 +15,12 @@ class OracleEnv:
         return self.state.copy()
 
     def update_state(self, action, reward):
-        self.state[action] += 1 if reward else -1
-        self.state[action] = np.clip(
-            self.state[action], -self.state_clip, self.state_clip
-        )
+    # 整體衰減（避免無限累積）
+        self.state = self.state * 0.9
+    # 根據 reward 更新
+        self.state[action] += reward
         return self.state.copy()
+    
 
     def fetch_prices(self, action):
         source = self.sources[action]

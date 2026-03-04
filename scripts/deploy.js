@@ -4,7 +4,6 @@ async function main() {
   const ethers = hre.ethers;
 
   const proxyOracleAddress = "0xa7eE1aBCD7af18B0956877D0dc26a5bf0E0ad575"; 
-  // ⚠️ 這個之後會換成 Sepolia 的 Proxy，目前先讓它能跑
 
   const PriceOracle = await ethers.getContractFactory("PriceOracle");
   const priceOracle = await PriceOracle.deploy(proxyOracleAddress);

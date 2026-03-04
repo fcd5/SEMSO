@@ -45,4 +45,13 @@ contract PriceOracle {
         PriceData memory p = rounds[latestRoundId];
         return (p.priceJson, p.timestamp);
     }
+    
+    function getRound(uint256 roundId)
+        external
+        view
+        returns (string memory, uint256)
+    {
+        PriceData memory p = rounds[roundId];
+        return (p.priceJson, p.timestamp);
+    }
 }

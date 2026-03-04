@@ -2,9 +2,27 @@ import time
 import requests
 from env import OracleEnv
 from RL import DoubleDQN
+import os
+import json
+from dotenv import load_dotenv
+from eth_account import Account
+from eth_account.messages import encode_defunct
 
 PROXY = "http://127.0.0.1:5000"
 NODE_ID = 2
+# 載入 .env
+load_dotenv()
+
+# 讀取 node2 的私鑰
+PRIVATE_KEY = os.getenv("NODE2_PRIVATE_KEY")
+
+if PRIVATE_KEY is None:
+    raise Exception("NODE2_PRIVATE_KEY not found in .env")
+
+# 取得 node 地址
+NODE_ADDRESS = Account.from_key(PRIVATE_KEY).address
+
+print("Node address:", NODE_ADDRESS)
 
 env = OracleEnv()
 
@@ -30,15 +48,26 @@ while True:
 
         action = RL.choose_action(state)
         prices = env.fetch_prices(action)
+        print("Node2 Current state:", state)
 
         payload = {
             "round_id": rid,
             "node_id": NODE_ID,
             "exchange": env.sources[action],
-            "prices": prices
+            "prices": prices,
         }
 
-        res = requests.post(f"{PROXY}/submit", json=payload, timeout=3)
+# 🔐 簽章
+        message = encode_defunct(text=json.dumps(payload))
+        signed = Account.sign_message(message, PRIVATE_KEY)
+
+        submission = {
+            "payload": payload,
+            "signature": signed.signature.hex(),
+            "address": "0xA1C9fd82Cb891B87Dc99EAf4854a993693cBDe71"
+        }
+
+        res = requests.post(f"{PROXY}/submit", json=submission, timeout=3)
         if res.status_code != 200:
             time.sleep(0.5)
             continue

@@ -1,9 +1,6 @@
 import numpy as np
 import tensorflow as tf
 
-np.random.seed(1)
-tf.random.set_seed(1)
-
 
 class QNetwork(tf.keras.Model):  
     def __init__(self, n_features, n_actions):
@@ -34,8 +31,8 @@ class DoubleDQN:
         e_greedy=0.9,
         replace_target_iter=200,
         memory_size=3000,
-        batch_size=32,
-        e_greedy_increment=None,
+        batch_size=10,
+        e_greedy_increment=0.2,
     ):
         self.n_actions = n_actions
         self.n_features = n_features
