@@ -388,19 +388,26 @@ def get_trade_history(wallet):
     conn = sqlite3.connect("alerts.db")
     cursor = conn.cursor()
 
+    # ✅ 用 LOWER() 兩邊都轉小寫比對
     cursor.execute("""
-        SELECT coin, price, alert_type, triggered_at
+        SELECT coin, price, alert_type, triggered_at, triggered
         FROM alerts
-        WHERE wallet = ? AND triggered = 1
-        ORDER BY triggered_at DESC
+        WHERE LOWER(wallet) = LOWER(?)
+        ORDER BY created_at DESC
     """, (wallet,))
     
     trades = cursor.fetchall()
     conn.close()
 
     trade_list = [
-        {"coin": coin, "price": price, "type": alert_type, "time": triggered_at}
-        for coin, price, alert_type, triggered_at in trades
+        {
+            "coin": coin,
+            "price": price,
+            "type": alert_type,
+            "time": triggered_at,
+            "triggered": bool(triggered)
+        }
+        for coin, price, alert_type, triggered_at, triggered in trades
     ]
 
     return jsonify(trade_list)

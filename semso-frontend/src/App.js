@@ -40,28 +40,27 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadLatest();
-    checkWallet();
     }, []);
 
   async function loadTradeHistory(addr) {
-    const wallet = addr || walletAddress;
+  const wallet = (addr || walletAddress)?.toLowerCase(); // ✅ 統一轉小寫
 
-    if (!wallet) {
-      alert("請先連接錢包");
-      return;
-    }
-
-    try {
-      console.log("Fetching trades for:", wallet);
-      const res = await fetch(`http://127.0.0.1:5000/trades/${wallet}`);
-      const data = await res.json();
-      console.log("Trade API response:", data);
-      setTradeHistory(data);
-    } catch (err) {
-      console.error(err);
-      alert("無法取得交易紀錄");
-    }
+  if (!wallet) {
+    alert("請先連接錢包");
+    return;
   }
+
+  try {
+    console.log("Fetching trades for:", wallet);
+    const res = await fetch(`http://127.0.0.1:5000/trades/${wallet}`);
+    const data = await res.json();
+    console.log("Trade API response:", data);
+    setTradeHistory(data);
+  } catch (err) {
+    console.error(err);
+    alert("無法取得交易紀錄");
+  }
+}
   
   async function handleCreateAlert() {
     if (!alertPrice || !alertEmail) {
@@ -70,7 +69,7 @@ function App() {
     }
 
     const payload = {
-      wallet: walletAddress,
+      wallet: walletAddress?.toLowerCase(),
       coin: alertCoin,
       price: Number(alertPrice),
       email: alertEmail,
@@ -102,48 +101,40 @@ function App() {
     }
   }
 
-  async function checkWallet() {
-    if (!window.ethereum) return;
-
-    const provider = new ethers.BrowserProvider(window.ethereum);
-
-    const accounts = await provider.listAccounts();
-
-    if (accounts.length > 0) {
-      const addr = accounts[0].address ? accounts[0].address : accounts[0]; // 兼容不同 ethers 版本
-      setWalletAddress(addr);
-
-      // ⭐ 自動載入交易紀錄
-      loadTradeHistory(addr);
-    }
-  }
   
-  async function connectWallet() {
+  // connectWallet 改成這樣
+async function connectWallet() {
   if (!window.ethereum) {
     alert("Please install MetaMask");
     return;
-    }
+  }
 
   try {
     const provider = new ethers.BrowserProvider(window.ethereum);
 
-    const accounts = await provider.send(
-      "eth_requestAccounts",
-      []
-    );
+    // ✅ 先撤銷舊授權，強制跳出 MetaMask 視窗
+    try {
+      await provider.send("wallet_revokePermissions", [
+        { eth_accounts: {} }
+      ]);
+    } catch (e) {
+      // 部分舊版 MetaMask 不支援，忽略錯誤
+    }
 
+    const accounts = await provider.send("eth_requestAccounts", []);
     const addr = accounts[0].address ? accounts[0].address : accounts[0];
 
     setWalletAddress(addr);
 
+    // ✅ 直接傳 addr，不依賴 walletAddress state
     loadTradeHistory(addr);
 
     console.log("Connected wallet:", addr);
 
-    } catch (err) {
+  } catch (err) {
     console.error(err);
-    }
   }
+}
 
   async function loadLatest() {
     const [priceJson, timestamp] = await contract.getLatestRound();
@@ -188,6 +179,7 @@ function App() {
 
 function disconnectWallet() {
   setWalletAddress(null);
+  setTradeHistory([]); 
 }
 
 
@@ -244,7 +236,7 @@ return (
       {walletAddress && (
         <div style={{
           position: "fixed",
-          bottom: "0",
+          bottom: "0px",
           left: "0",
           width: "100%",
           background: "rgba(0,0,0,0.6)",
@@ -313,12 +305,12 @@ return (
     {/* 右側固定交易紀錄 */}
     <div className="trade-panel" style={{
       position: "fixed",
-      top: "100px",      // 可調整到你想要的垂直位置
-      right: "20px",     // 距離右邊 20px
-      width: "320px",    // 固定寬度
+      top: "100px",      // 調整垂直位置
+      right: "50px",     // 調整水平位置
+      width: "490px",    // 調整寬度
       maxHeight: "70vh", // 高度不要超過畫面
       overflowY: "auto", // 滾動
-      background: "rgba(255,255,255,0.95)",
+      background: "rgba(0, 0, 0, 0.4)",
       border: "1px solid #ccc",
       padding: "10px",
       borderRadius: "8px",
@@ -349,7 +341,7 @@ return (
                 <td>{trade.type}</td>
                 <td>{trade.price}</td>
                 <td>{new Date(trade.time).toLocaleString()}</td>
-                <td>{trade.triggered ? "Triggered" : "Pending"}</td>
+                <td>{trade.triggered ? "是" : "否"}</td>
               </tr>
             ))
           )}

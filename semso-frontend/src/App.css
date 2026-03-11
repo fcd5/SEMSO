@@ -63,18 +63,19 @@ tr:nth-child(even) {
 }
 
 .trade-panel {
-  color: black;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
 }
 
 .trade-panel table {
-  color: black;
+  color: white;
 }
 
 .trade-panel th {
-  background: rgba(0,0,0,0.1);
-  color: black;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
 .trade-panel td {
-  color: black;
+  color: white;
 }
