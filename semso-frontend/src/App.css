@@ -12,6 +12,8 @@ body {
   padding: 30px;
   border-radius: 18px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+  position: relative;
 }
 
 h1 {
@@ -58,4 +60,21 @@ tr:nth-child(even) {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
+}
+
+.trade-panel {
+  color: black;
+}
+
+.trade-panel table {
+  color: black;
+}
+
+.trade-panel th {
+  background: rgba(0,0,0,0.1);
+  color: black;
+}
+
+.trade-panel td {
+  color: black;
 }
