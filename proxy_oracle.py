@@ -390,7 +390,7 @@ def get_trade_history(wallet):
 
     # ✅ 用 LOWER() 兩邊都轉小寫比對
     cursor.execute("""
-        SELECT coin, price, alert_type, triggered_at, triggered
+        SELECT coin, price, alert_type, created_at, triggered
         FROM alerts
         WHERE LOWER(wallet) = LOWER(?)
         ORDER BY created_at DESC
@@ -404,13 +404,14 @@ def get_trade_history(wallet):
             "coin": coin,
             "price": price,
             "type": alert_type,
-            "time": triggered_at,
+            "time": created_at,
             "triggered": bool(triggered)
         }
-        for coin, price, alert_type, triggered_at, triggered in trades
+        for coin, price, alert_type, created_at, triggered in trades
     ]
 
     return jsonify(trade_list)
+
 
 # =========================
 # Entry point
